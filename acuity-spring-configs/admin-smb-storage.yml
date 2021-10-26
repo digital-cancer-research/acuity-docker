@@ -1,0 +1,5 @@
+smb-storage:
+  client:
+    domain:
+    username:
+    password:

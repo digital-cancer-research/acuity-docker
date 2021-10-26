@@ -1,0 +1,110 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  httpd:
+    build: building-mode/images/httpd
+    restart: always
+    profiles: [ "main" ]
+    networks:
+      - rct_net
+    ports:
+      - "80:80"
+      - "443:443"
+      - "444:444"
+      - "447:447"
+    volumes:
+      - ./ssl-certificates/certs:/etc/pki/tls/certs/
+      - ./ssl-certificates/keys:/etc/pki/tls/private/
+      - ./logs/httpd:/var/log
+      - ./images/httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./images/httpd/ssl.conf:/usr/local/apache2/conf.d/ssl.conf
+  config-server:
+    build: building-mode/images/config-server
+    restart: always
+    profiles: [ "main" ]
+    networks:
+      - rct_net
+    volumes:
+      - ./acuity-spring-configs:/usr/root/acuity-spring-configs
+      - ./building-mode/builds:/usr/root/builds/
+    environment:
+      - WAR_NAME=acuity-config-server.war
+  vasecurity:
+    build: building-mode/images/acuity-app
+    restart: always
+    profiles: [ "main" ]
+    networks:
+      - rct_net
+    volumes:
+      - ./logs/vasecurity:/var/log
+      - ./building-mode/builds:/usr/root/builds/
+    environment:
+      - ENV_TYPE_PROFILE=${ENV_TYPE_PROFILE}
+      - AUTH_PROFILE=${AUTH_PROFILE}
+      - CONFIG_PROFILE=${CONFIG_PROFILE}
+      - OTHER_PROFILES=default,postgres-mode
+      - WAR_NAME=vasecurity.war
+    env_file:
+      - env-configs/vasecurity.env
+  vahub:
+    build: building-mode/images/acuity-app
+    restart: always
+    profiles: [ "main" ]
+    networks:
+      - rct_net
+    volumes:
+      - ./logs/vahub:/var/log/
+      - ./building-mode/builds:/usr/root/builds/
+      - ./vahub-cache:/root
+    environment:
+      - ENV_TYPE_PROFILE=${ENV_TYPE_PROFILE}
+      - AUTH_PROFILE=${AUTH_PROFILE}
+      - CONFIG_PROFILE=${CONFIG_PROFILE}
+      - OTHER_PROFILES=NoScheduledJobs
+      - WAR_NAME=vahub.war
+    env_file:
+      - env-configs/vahub.env
+  adminui:
+    build: building-mode/images/acuity-app
+    restart: always
+    profiles: [ "main" ]
+    networks:
+      - rct_net
+    volumes:
+      - ./logs/adminui:/var/log
+      - ./building-mode/builds:/usr/root/builds/
+      - ./local-file-storage:/usr/root/local-file-storage
+    environment:
+      - ENV_TYPE_PROFILE=${ENV_TYPE_PROFILE}
+      - AUTH_PROFILE=${AUTH_PROFILE}
+      - CONFIG_PROFILE=${CONFIG_PROFILE}
+      - OTHER_PROFILES=${STORAGE_PROFILE}
+      - WAR_NAME=adminui.war
+    env_file:
+      - env-configs/adminui.env
+  postgres:
+    build: building-mode/images/postgres
+    restart: always
+    profiles:
+      - main
+      - init_db
+    networks:
+      - rct_net
+    env_file: env-configs/postgres.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data/pgdata
+      - ./images/postgres/data:/usr/root/data
+      - ./building-mode/images/postgres/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
+  flyway:
+    image: flyway/flyway:7.5.0-alpine
+    profiles: [ "init_db" ]
+    networks:
+      - rct_net
+    command: migrate
+    volumes:
+      - ./images/flyway:/flyway/conf
+      - ./building-mode/builds/acuity-flyway.jar:/flyway/jars/acuity-flyway.jar
+networks:
+  rct_net:
+    driver: bridge
+volumes:
+  pgdata:

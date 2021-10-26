@@ -1,0 +1,71 @@
+# manages "X-Application-Context" HTTP header setting (more info: https://docs.spring.io/spring-boot/docs/1.4.x/reference/html/common-application-properties.html )
+management:
+  add-application-context-header: false
+
+# manages links rendering behind proxy (more info: https://docs.spring.io/spring-boot/docs/1.5.x/reference/html/howto-embedded-servlet-containers.html#howto-use-tomcat-behind-a-proxy-server )
+server:
+  use-forward-headers: true
+
+# path to the logs directory (more info: https://docs.spring.io/spring-boot/docs/1.5.4.RELEASE/reference/htmlsingle/#boot-features-custom-log-configuration )
+logging:
+  path: /var/log
+
+# database connection data. if needed, the ones you need may be overridden for particular app in its config.
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/acuity_db
+    username: acuity
+    password: your_password
+    driver-class-name: org.postgresql.Driver
+    fetch:
+      size: 256
+    initial-size: 10
+    max-active: 50
+    max-idle: 30
+    min-idle: 10
+    max-wait: 10000
+    validation-query: SELECT 1
+    test-while-idle: true
+    test-on-borrow: true
+    test-on-return: true
+
+acuity:
+  # used by AdminUI and VAHub to connect to VASecurity
+  vasecurity:
+    url: http://vasecurity:8000
+    username: username
+    password: pass
+  # used by AdminUI and VASecurity to connect to VAHUb
+  vahub:
+    url: http://vahub:8000
+    username: username
+    password: pass
+  # for VASecurity authorization module used in all ACUITY apps (basic authentication settings; should be here as long as basic authentication is used)
+  security:
+    basic-auth:
+      users:
+        - username: username
+          password: pass
+          roles:
+            - REMOTE_USER
+            - ACL_ADMINISTRATOR
+            - TRAINED_USER
+          authorities:
+            - ADMIN
+
+# Azure Machine Learning settings (used by VASecurity and AdminUI)
+azureml:
+  enable: false
+  webservice:
+    qtalgorithm:
+      url:
+      apikey:
+      workspaces:
+      service:
+      api-version: 2.0
+      details: true
+
+integration:
+  # Integration with CBioPortal (used by AdminUI and VAHub)
+  cbioportal:
+    url:

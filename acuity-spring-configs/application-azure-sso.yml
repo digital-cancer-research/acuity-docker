@@ -1,0 +1,17 @@
+# common data of all ACUITY applications registration on Azure portal; `resource` and `client` same-named options has identical values
+azure:
+  resource:
+    accessTokenUri:
+    scope: openid
+    tokenName: id_token code
+    userAuthorizationUri:
+    authenticationScheme: form
+  client:
+    accessTokenUri:
+    scope: openid
+    tokenName: id_token code
+    userAuthorizationUri:
+    authenticationScheme: form
+  logoutUrl:
+  authorityUri:
+  graphUri: https://graph.microsoft.com

@@ -1,0 +1,21 @@
+# email settings
+mail:
+  send-debug-info-to: user@domain.com
+  sender:
+    # SMTP server url
+    host: localhost
+    # SMTP server port
+    port: 25
+
+# session cookie name used by SpringBoot (by default JSESSIONID;
+# more info: https://stackoverflow.com/questions/25918556/spring-boot-configure-custom-jsessionid-for-embedded-server )
+server:
+  session:
+    cookie:
+      name: ADMINUISESSIONID
+
+# Spring Batch-specific option: disables all jobs execution on app startup (more info: https://www.baeldung.com/spring-batch-testing-job)
+spring:
+  batch:
+    job:
+      enabled: false

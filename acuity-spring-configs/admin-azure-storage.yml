@@ -1,0 +1,5 @@
+azure:
+  storage:
+    protocol: https
+    account:
+    key:

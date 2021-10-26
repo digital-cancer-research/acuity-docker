@@ -1,0 +1,1 @@
+docker-compose -f ../docker-compose.yml --env ../.env.dev --profile main up --build -d

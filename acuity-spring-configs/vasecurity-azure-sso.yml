@@ -1,0 +1,12 @@
+# data of VASecurity application registration on Azure portal; `resource` and `client` same-named options has identical values
+azure:
+  resource:
+    clientId:
+    clientSecret:
+    # the URI where user is redirected after login on Azure page (should be the same as configured in the VASecurity registration on the Azure portal)
+    preEstablishedRedirectUri: http://<acuity_url>:444/login
+    useCurrentUri: false
+  client:
+    clientId:
+    clientSecret:
+    registeredRedirectUri: http://<acuity_url>:444/login

@@ -1,0 +1,105 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  httpd:
+    image: ${REPOSITORY_AND_SLASH}httpd:${ACUITY_VERSION}
+    restart: always
+    profiles: [ "main" ]
+    networks:
+      - rct_net
+    ports:
+      - "80:80"
+      - "443:443"
+      - "444:444"
+      - "447:447"
+    volumes:
+      - ./ssl-certificates/certs:/etc/pki/tls/certs/
+      - ./ssl-certificates/keys:/etc/pki/tls/private/
+      - ./logs/httpd:/var/log
+      - ./images/httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./images/httpd/ssl.conf:/usr/local/apache2/conf.d/ssl.conf
+  config-server:
+    image: ${REPOSITORY_AND_SLASH}acuity-config-server:${ACUITY_VERSION}
+    restart: always
+    profiles: [ "main" ]
+    networks:
+      - rct_net
+    volumes:
+      - ./acuity-spring-configs:/usr/root/acuity-spring-configs
+  vasecurity:
+    image: ${REPOSITORY_AND_SLASH}va-security:${ACUITY_VERSION}
+    restart: always
+    profiles: [ "main" ]
+    networks:
+      - rct_net
+    volumes:
+      - ./logs/vasecurity:/var/log
+    environment:
+      - ENV_TYPE_PROFILE=${ENV_TYPE_PROFILE}
+      - AUTH_PROFILE=${AUTH_PROFILE}
+      - CONFIG_PROFILE=${CONFIG_PROFILE}
+      - OTHER_PROFILES=default,postgres-mode
+    env_file:
+      - env-configs/vasecurity.env
+  vahub:
+    image: ${REPOSITORY_AND_SLASH}vahub:${ACUITY_VERSION}
+    restart: always
+    profiles: [ "main" ]
+    networks:
+      - rct_net
+    volumes:
+      - ./logs/vahub:/var/log/
+      - ./vahub-cache:/root
+    environment:
+      - ENV_TYPE_PROFILE=${ENV_TYPE_PROFILE}
+      - AUTH_PROFILE=${AUTH_PROFILE}
+      - CONFIG_PROFILE=${CONFIG_PROFILE}
+      - OTHER_PROFILES=NoScheduledJobs
+    env_file:
+      - env-configs/vahub.env
+  adminui:
+    image: ${REPOSITORY_AND_SLASH}adminui:${ACUITY_VERSION}
+    restart: always
+    profiles: [ "main" ]
+    networks:
+      - rct_net
+    volumes:
+      - ./logs/adminui:/var/log
+      - ./local-file-storage:/usr/root/local-file-storage
+    environment:
+      - ENV_TYPE_PROFILE=${ENV_TYPE_PROFILE}
+      - AUTH_PROFILE=${AUTH_PROFILE}
+      - CONFIG_PROFILE=${CONFIG_PROFILE}
+      - STORAGE_PROFILE=${STORAGE_PROFILE}
+    env_file:
+      - env-configs/adminui.env
+  postgres:
+    image: ${REPOSITORY_AND_SLASH}acuity-postgresql:${ACUITY_VERSION}
+    restart: always
+    profiles:
+      - main
+      - init_db
+    networks:
+      - rct_net
+    env_file: env-configs/postgres.env
+    volumes:
+      - type: volume
+        source: pgdata
+        target: /var/lib/postgresql/data/pgdata
+      - type: bind
+        source: ./images/postgres/data
+        target: /usr/root/data
+  flyway:
+    image: ${REPOSITORY_AND_SLASH}acuity-flyway:${ACUITY_VERSION}
+    profiles: [ "init_db" ]
+    networks:
+      - rct_net
+    command: migrate
+    volumes:
+      - type: bind
+        source: ./images/flyway
+        target: /flyway/conf
+networks:
+  rct_net:
+    driver: bridge
+volumes:
+  pgdata:

@@ -1,0 +1,6 @@
+local-storage:
+  # Could be changed to the path of a local folder for development purposes
+  path: /usr/root/local-file-storage
+  # Could be switched to another, e.g. 'azure-file://' or 'smb://' (to emulate Azure or Samba storage correspondingly);
+  # in this case 'azure-storage'/'smb-storage' profiles should be disabled to avoid conflict
+  prefix: local://

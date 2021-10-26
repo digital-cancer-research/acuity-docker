@@ -1,0 +1,10 @@
+.idea/
+*.iml
+
+/building-mode/builds/
+/logs/
+/ssl-certificates/certs/
+/ssl-certificates/keys/
+startup/install-SSL-for-local-start/generated-ssl-certificates
+/local-file-storage/
+/vahub-cache/

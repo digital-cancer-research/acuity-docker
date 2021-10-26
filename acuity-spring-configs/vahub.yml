@@ -1,0 +1,59 @@
+# used only to define Kryo cache directory path in local FS; may be useful if you make VAHub connect to different DBs
+# and want to keep different sets of cached data, also allows to keep separate cache directory for integration tests
+env:
+  name:
+    ${ENV_TYPE_PROFILE}
+
+server:
+  session:
+    # Tomcat session persistence setting
+    persistent: true
+    # session cookie name used by SpringBoot (by default JSESSIONID;
+    # more info: https://stackoverflow.com/questions/25918556/spring-boot-configure-custom-jsessionid-for-embedded-server )
+    cookie:
+      name: VAHUBSESSIONID
+
+# customer-specific settings:
+branding:
+  about:
+    welcomeVideo:
+    howtoVideo:
+  # support and feedback emails
+  support:
+    email: user@domain.com
+    feedback: user@domain.com
+    # link to the VAHub best practices manual (if exists)
+    best-practice:
+  # info about supporters shown on the VAHub Support page
+  super-users:
+    - name: Name Surname
+      email: name.surname@domain.com
+      location:
+      department: Department
+      about: An example of a superuser.
+    - name: Support Desk
+      email: support@domain.com
+      location:
+      department:
+      about:
+  branding-colors:
+    brandingColor: '#d4e9f2'
+    headerTextColor: black
+    headerDatasetsColor: '#0043af'
+    brightBrandingColor: '#0092b6'
+    activePanelColor: '#a3d2e3'
+    widgetColor: '#64bbd4'
+    widgetBrightColor: '#00a5c6'
+    transparency: 0.5
+  # path to the directory (inside the VAHub war) with customer-specific images (like logo); "images" if empty
+  path-to-images:
+  # links to external services displayed on the VAHub home page (if empty, corresponding buttons are disabled)
+  extended-options:
+    omics-services-url:
+    patient-services-url:
+    ai-and-ml-services-url:
+  showMyDashboard: false
+
+# AG Grid library license key (if the customer has one)
+licensing:
+  agGridKey:

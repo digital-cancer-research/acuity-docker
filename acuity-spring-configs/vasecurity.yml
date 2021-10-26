@@ -1,0 +1,6 @@
+# session cookie name used by SpringBoot (by default JSESSIONID;
+# more info: https://stackoverflow.com/questions/25918556/spring-boot-configure-custom-jsessionid-for-embedded-server )
+server:
+  session:
+    cookie:
+      name: VASECURITYSESSIONID
